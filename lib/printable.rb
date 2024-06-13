@@ -4,19 +4,37 @@ require 'colorize'
 
 # Module for printing CLI display for Mastermind game.
 module Printable
-  def print(guesses, _turns)
-    print_divider
-    guesses.each do |guess|
+  def print(guesses, turns)
+    print_top_border
+    guesses.each_with_index do |guess, index|
       print_guess(guess)
-      print_divider
+      print_divider unless index == turns - 1
     end
+    print_bottom_border
   end
 
   private
 
+  def print_top_border
+    outside_line = '─' * 31
+    inside_line = '═' * 27
+    outside = "┌#{outside_line}┐"
+    inside = "│ ╔#{inside_line}╗ │"
+    puts "#{outside}\n#{inside}"
+  end
+
+  def print_bottom_border
+    outside_line = '─' * 31
+    inside_line = '═' * 27
+    inside = "│ ╚#{inside_line}╝ │"
+    outside = "└#{outside_line}┘"
+    puts "#{inside}\n#{outside}"
+  end
+
+
   def print_divider
     line = '═' * 27
-    puts "│╠#{line}╣│"
+    puts "│ ╠#{line}╣ │"
   end
 
   def print_guess(guess)
@@ -69,11 +87,11 @@ module Printable
   end
 
   def right_border
-    "#{right_padding}║│"
+    "#{right_padding}║ │"
   end
 
   def left_border
-    "│║#{left_padding}"
+    "│ ║#{left_padding}"
   end
 
   def inside_border

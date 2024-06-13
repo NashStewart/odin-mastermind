@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
-require_relative 'lib/match'
+require_relative 'lib/round'
 
-match = Match.new
+round = Round.new
 
-p match.generate_random_code
+p round.generate_random_code
 
-match.guess(%i[red white blue green])
-# match.print
-match.guess(%i[green green red red])
-# match.print
-match.guess(%i[yellow white green green])
-# match.print
-match.guess(%i[white black red blue])
-# match.print
-match.guess(match.code_colors)
-match.print
+round.guess(%i[red white blue green])
+round.guess(%i[green green red red])
+round.guess(%i[yellow white green green])
+round.guess(%i[white black red blue])
+round.guess(round.code_colors)
+
+round.play
+round.print

@@ -2,8 +2,8 @@
 
 require_relative 'printable'
 
-# Object modeling the data and behavior of a match of Mastermind.
-class Match
+# Object modeling the data and behavior of a round of Mastermind.
+class Round
   include Printable
 
   attr_reader :code_colors, :colors, :guesses, :turns, :turns_taken
@@ -19,6 +19,16 @@ class Match
     code_colors.each_with_index { |_, i| code_colors[i] = %i[red yellow blue green black white].sample }
     # @code_colors = %i[red white green black]
     @code_colors = %i[green green blue black]
+  end
+
+  def play
+    @guesses[turns_taken][:colors] = Array.new(4, :grey)
+    @guesses[turns_taken][:colors][0] = :red
+    return
+    while turns_taken < turns
+      print
+      puts "Enter your guess"
+    end 
   end
 
   def guess(guess_colors)
