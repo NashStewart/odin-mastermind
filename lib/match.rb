@@ -1,56 +1,61 @@
 # frozen_string_literal: true
 
+require_relative 'printable'
+
 # Object modeling the data and behavior of a match of Mastermind.
 class Match
-  attr_reader :code, :colors, :guesses, :turns
+  include Printable
+
+  attr_reader :code_colors, :colors, :guesses, :turns, :turns_taken
 
   def initialize
-    @code = Array.new 4
-    @colors = %i[red yellow blue green black white]
+    @code_colors = Array.new 4
     @turns = 12
-    @guesses = Array.new(turns) { { guess: [], full_matches: 0, color_only_matches: 0 } }
+    @turns_taken = 0
+    @guesses = Array.new(turns) { { colors: [], full_matches: 0, color_only_matches: 0 } }
   end
 
   def generate_random_code
-    code.each_with_index { |_, i| code[i] = colors.sample }
-    # @code = %i[red white green black]
-    @code = %i[green green blue black]
+    code_colors.each_with_index { |_, i| code_colors[i] = %i[red yellow blue green black white].sample }
+    # @code_colors = %i[red white green black]
+    @code_colors = %i[green green blue black]
   end
 
-  def guess(sequence)
-    @guesses[-turns][:guess] = sequence.clone
+  def guess(guess_colors)
+    return unless turns_taken < turns - 1
 
-    return true if code == sequence
+    @guesses[turns_taken][:colors] = guess_colors.clone
 
-    remaining_colors = record_full_matches(sequence)
-    record_color_only_matches(remaining_colors, sequence)
+    remaining_colors = record_full_matches(guess_colors)
+    record_color_only_matches(remaining_colors, guess_colors)
 
-    @turns -= 1
+    @turns_taken += 1
+    code_colors == guess_colors
+  end
 
-    pp guesses
-    pp remaining_colors
-    false
+  def print
+    super(guesses, turns)
   end
 
   private
 
-  def record_full_matches(sequence)
-    remaining_colors = code.clone
-    code.each_with_index do |color, index|
-      next unless color == sequence[index]
+  def record_full_matches(guess_colors)
+    remaining_colors = code_colors.clone
+    code_colors.each_with_index do |color, index|
+      next unless color == guess_colors[index]
 
-      @guesses[-turns][:full_matches] += 1
+      @guesses[turns_taken][:full_matches] += 1
       remaining_colors[index] = nil
-      sequence[index] = nil
+      guess_colors[index] = nil
     end
     remaining_colors
   end
 
-  def record_color_only_matches(unmatched_colors, sequence)
-    sequence.compact.each do |color|
+  def record_color_only_matches(unmatched_colors, guess_colors)
+    guess_colors.compact.each do |color|
       if unmatched_colors.include?(color)
         unmatched_colors.delete_at unmatched_colors.index(color)
-        @guesses[-turns][:color_only_matches] += 1
+        @guesses[turns_taken][:color_only_matches] += 1
       end
     end
   end
