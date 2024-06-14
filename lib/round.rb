@@ -12,7 +12,7 @@ class Round
     @code_is_cracked = false
     @code_colors = Array.new 4
     @possible_colors = %i[red blue yellow green black white]
-    @turns = 2
+    @turns = 12
     @turns_taken = 0
     @guesses = Array.new(turns) { { colors: [], full_matches: 0, color_only_matches: 0 } }
   end
@@ -21,13 +21,14 @@ class Round
     generate_random_code
     take_turn until code_is_cracked || turns_taken == turns
     print
+    puts code_colors.reduce('The code is: ') { |str, color| str + " #{feedback_pip(color)} ".colorize(:background => :gray)  }
+    code_is_cracked
   end
 
   private
 
   def generate_random_code
     code_colors.each_with_index { |_, i| code_colors[i] = %i[red yellow blue green black white].sample }
-    p code_colors
   end
 
   def take_turn
@@ -51,7 +52,7 @@ class Round
 
   def guess(guess_colors)
     return unless turns_taken < turns
-    
+
     @code_is_cracked = code_colors == guess_colors
     @guesses[turns_taken][:colors] = guess_colors.clone
 
@@ -67,12 +68,11 @@ class Round
 
   def print_menu
     print
-    puts "\nEnter a color to choose:"
     menu = possible_colors.reduce('') do |options, color|
       color_str = color.to_s.capitalize
-      options + "#{feedback_pip color}: #{color_str} "
+      options + "#{feedback_pip(color)}: #{color_str} "
     end
-    puts menu
+    puts "Select a color\n#{menu}"
   end
 
   def record_full_matches(guess_colors)

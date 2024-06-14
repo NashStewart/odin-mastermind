@@ -20,20 +20,14 @@ module Printable
   private
 
   def print_top_border
-    outside_line = '─' * 31
-    inside_line_one = '═' * 7
-    inside_line_two = '═' * 19
-    outside = "┌#{outside_line}┐"
-    inside = "│ ╔#{inside_line_one}╦#{inside_line_two}╗ │"
+    outside = "┌#{'─' * 31}┐"
+    inside = "│ ╔#{'═' * 7}╦#{'═' * 19}╗ │"
     puts "#{outside}\n#{inside}"
   end
 
   def print_bottom_border
-    outside_line = '─' * 31
-    inside_line_one = '═' * 7
-    inside_line_two = '═' * 19
-    inside = "│ ╚#{inside_line_one}╩#{inside_line_two}╝ │"
-    outside = "└#{outside_line}┘"
+    inside = "│ ╚#{'═' * 7}╩#{'═' * 19}╝ │"
+    outside = "└#{'─' * 31}┘"
     puts "#{inside}\n#{outside}"
   end
 
@@ -68,8 +62,8 @@ module Printable
     colors.reduce('') { |str, color| str + "#{background}#{pixel color}#{background}" }
   end
 
-  def background
-    '▓'.colorize :gray
+  def background(color=:gray)
+    '▓'.colorize color
   end
 
   def pixel(color)

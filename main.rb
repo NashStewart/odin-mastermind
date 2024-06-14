@@ -4,4 +4,5 @@ require_relative 'lib/round'
 
 round = Round.new
 
-round.play
+winner = round.play ? 'Player' : 'Computer'
+puts "#{winner} wins!"
