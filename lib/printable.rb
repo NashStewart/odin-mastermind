@@ -13,8 +13,17 @@ module Printable
     print_bottom_border
   end
 
-  def feedback_pip(color)
-    color ? '■'.colorize(color) : background
+  def print_menu(possible_colors)
+    print
+    menu = possible_colors.reduce('') do |options, color|
+      options + "#{feedback_pip(color)}: #{color.to_s.capitalize} "
+    end
+    puts "Type a color to select\n#{menu}"
+  end
+
+  def print_code(code_colors)
+    code = code_colors.reduce('') { |str, color| str + " #{feedback_pip(color)} ".colorize(background: :gray) }
+    puts "The code is: #{code}"
   end
 
   private
@@ -62,28 +71,24 @@ module Printable
     colors.reduce('') { |str, color| str + "#{background}#{pixel color}#{background}" }
   end
 
-  def background(color=:gray)
-    '▓'.colorize color
-  end
-
   def pixel(color)
     color ? '██'.colorize(color) : background * 2
   end
 
-  def right_padding
-    '▒░'.colorize :gray
+  def feedback_pip(color)
+    color ? '■'.colorize(color) : background
   end
 
-  def left_padding
-    '░▒'.colorize :gray
+  def background(color = :gray)
+    '▓'.colorize color
   end
 
   def right_border
-    "#{right_padding}║ │"
+    "#{'▒░'.colorize :gray}║ │"
   end
 
   def left_border
-    "│ ║#{left_padding}"
+    "│ ║#{'░▒'.colorize :gray}"
   end
 
   def inside_border

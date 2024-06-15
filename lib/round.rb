@@ -6,7 +6,7 @@ require_relative 'printable'
 class Round
   include Printable
 
-  attr_reader :code_colors, :colors, :guesses, :code_is_cracked, :possible_colors, :turns, :turns_taken
+  attr_reader :code_colors, :colors, :guesses, :code_is_cracked, :possible_colors, :score, :turns, :turns_taken
 
   def initialize
     @code_is_cracked = false
@@ -20,29 +20,34 @@ class Round
   def play
     generate_random_code
     take_turn until code_is_cracked || turns_taken == turns
+    @score = code_is_cracked ? turns_taken : turns + 1
     print
-    puts code_colors.reduce('The code is: ') { |str, color| str + " #{feedback_pip(color)} ".colorize(:background => :gray)  }
+    print_code(code_colors)
     code_is_cracked
   end
 
   private
 
   def generate_random_code
-    code_colors.each_with_index { |_, i| code_colors[i] = %i[red yellow blue green black white].sample }
+    code_colors.each_with_index { |_, i| code_colors[i] = possible_colors.sample }
   end
 
   def take_turn
     @guesses[turns_taken][:colors] = Array.new 4
-    choice_count = 0
-    while choice_count < 4
-      print_menu
-      choice = player_choice
-      next unless choice
+    choice_index = 0
+    while choice_index < 4
+      print_menu possible_colors
+      next unless add_guess_choice(player_choice, choice_index)
 
-      @guesses[turns_taken][:colors][choice_count] = choice
-      choice_count += 1
+      choice_index += 1
     end
     guess(guesses[turns_taken][:colors])
+  end
+
+  def add_guess_choice(choice, index)
+    return unless choice
+
+    @guesses[turns_taken][:colors][index] = choice
   end
 
   def player_choice
@@ -64,15 +69,6 @@ class Round
 
   def print
     super(guesses, turns)
-  end
-
-  def print_menu
-    print
-    menu = possible_colors.reduce('') do |options, color|
-      color_str = color.to_s.capitalize
-      options + "#{feedback_pip(color)}: #{color_str} "
-    end
-    puts "Select a color\n#{menu}"
   end
 
   def record_full_matches(guess_colors)
