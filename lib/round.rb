@@ -22,8 +22,39 @@ class Round
     take_turn until code_is_cracked || turns_taken == turns
     @score = code_is_cracked ? turns_taken : turns + 1
     print
-    print_code(code_colors)
+    print_code code_colors
     code_is_cracked
+  end
+
+  def guess(guess_colors)
+    return unless turns_taken < turns
+
+    @code_is_cracked = code_colors == guess_colors
+    @guesses[turns_taken][:colors] = guess_colors
+
+    guess_colors_copy = guess_colors.clone
+    remaining_colors = record_full_matches(guess_colors_copy)
+    record_color_only_matches(remaining_colors, guess_colors_copy)
+
+    @turns_taken += 1
+    guesses[turns_taken - 1]
+  end
+
+  def prompt_player_code
+    puts 'Enter a code.'
+    index = 0
+    while index < 4
+      puts 'Type a color:'
+      choice = player_choice
+      next unless choice
+
+      @code_colors[index] = choice
+      index += 1
+    end
+  end
+
+  def print
+    super(guesses, turns)
   end
 
   private
@@ -53,22 +84,6 @@ class Round
   def player_choice
     choice = gets.chomp.downcase.to_sym
     choice if possible_colors.include?(choice)
-  end
-
-  def guess(guess_colors)
-    return unless turns_taken < turns
-
-    @code_is_cracked = code_colors == guess_colors
-    @guesses[turns_taken][:colors] = guess_colors.clone
-
-    remaining_colors = record_full_matches(guess_colors)
-    record_color_only_matches(remaining_colors, guess_colors)
-
-    @turns_taken += 1
-  end
-
-  def print
-    super(guesses, turns)
   end
 
   def record_full_matches(guess_colors)

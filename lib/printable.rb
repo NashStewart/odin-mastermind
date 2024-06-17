@@ -5,6 +5,7 @@ require 'colorize'
 # Module for printing CLI display for Mastermind game.
 module Printable
   def print(guesses, turns)
+    puts "\n\n\n"
     print_top_border
     guesses.each_with_index do |guess, index|
       print_guess guess
