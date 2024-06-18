@@ -49,4 +49,10 @@ class Computer
     all_colors = colors.each_with_object([]) { |color, array| color.last[:hits].times { array << color.first } }
     all_colors.permutation { |permutation| @possible_codes << permutation }
   end
+
+  def remove_no_hit_indices(guess)
+    guess.each_with_index do |color, index|
+      @possible_codes.delete_if { |code| code[index] == color }
+    end
+  end
 end

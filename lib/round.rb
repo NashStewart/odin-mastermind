@@ -6,13 +6,13 @@ require_relative 'printable'
 class Round
   include Printable
 
-  attr_reader :code_colors, :colors, :guesses, :code_is_cracked, :possible_colors, :score, :turns, :turns_taken
+  attr_reader :code_colors, :colors, :guesses, :code_is_cracked, :possible_colors, :turns, :turns_taken
 
-  def initialize
+  def initialize(turns)
     @code_is_cracked = false
     @code_colors = Array.new 4
     @possible_colors = %i[red blue yellow green black white]
-    @turns = 12
+    @turns = turns
     @turns_taken = 0
     @guesses = Array.new(turns) { { colors: [], full_matches: 0, color_only_matches: 0 } }
   end
@@ -20,10 +20,12 @@ class Round
   def play
     generate_random_code
     take_turn until code_is_cracked || turns_taken == turns
-    @score = code_is_cracked ? turns_taken : turns + 1
     print
     print_code code_colors
-    code_is_cracked
+  end
+
+  def final_score
+    code_is_cracked ? turns_taken : turns + 1
   end
 
   def guess(guess_colors)
@@ -31,20 +33,19 @@ class Round
 
     @code_is_cracked = code_colors == guess_colors
     @guesses[turns_taken][:colors] = guess_colors
-
     guess_colors_copy = guess_colors.clone
     remaining_colors = record_full_matches(guess_colors_copy)
     record_color_only_matches(remaining_colors, guess_colors_copy)
-
     @turns_taken += 1
     guesses[turns_taken - 1]
   end
 
   def prompt_player_code
-    puts 'Enter a code.'
     index = 0
     while index < 4
-      puts 'Type a color:'
+      puts "\n" * 50
+      print_code code_colors
+      print_menu possible_colors
       choice = player_choice
       next unless choice
 
@@ -67,6 +68,7 @@ class Round
     @guesses[turns_taken][:colors] = Array.new 4
     choice_index = 0
     while choice_index < 4
+      print
       print_menu possible_colors
       next unless add_guess_choice(player_choice, choice_index)
 

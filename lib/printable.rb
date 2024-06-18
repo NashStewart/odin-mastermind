@@ -5,7 +5,7 @@ require 'colorize'
 # Module for printing CLI display for Mastermind game.
 module Printable
   def print(guesses, turns)
-    puts "\n\n\n"
+    puts "\n" * 50
     print_top_border
     guesses.each_with_index do |guess, index|
       print_guess guess
@@ -15,7 +15,6 @@ module Printable
   end
 
   def print_menu(possible_colors)
-    print
     menu = possible_colors.reduce('') do |options, color|
       options + "#{feedback_pip(color)}: #{color.to_s.capitalize} "
     end
@@ -24,7 +23,7 @@ module Printable
 
   def print_code(code_colors)
     code = code_colors.reduce('') { |str, color| str + " #{feedback_pip(color)} ".colorize(background: :gray) }
-    puts "The code is: #{code}"
+    puts "\nThe code is: #{code}"
   end
 
   private
