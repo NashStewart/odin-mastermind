@@ -19,8 +19,8 @@ end
 difficulty = nil
 until difficulty
   puts "\n" * 50
-  puts "\nWhat difficulty would you like to play?\n\nEasy, normal, or hard?"
-  input = gets.chomp.to_sym
+  puts "\nWhat difficulty would you like to play?\n\nEASY, NORMAL, or HARD?"
+  input = gets.chomp.downcase.to_sym
   difficulty = input if %i[easy normal hard].include? input
 end
 puts "\n" * 50
