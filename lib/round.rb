@@ -8,11 +8,11 @@ class Round
 
   attr_reader :code_colors, :colors, :guesses, :code_is_cracked, :possible_colors, :turns, :turns_taken
 
-  def initialize(turns)
+  def initialize
     @code_is_cracked = false
     @code_colors = Array.new 4
     @possible_colors = %i[red blue yellow green black white]
-    @turns = turns
+    @turns = 12
     @turns_taken = 0
     @guesses = Array.new(turns) { { colors: [], full_matches: 0, color_only_matches: 0 } }
   end

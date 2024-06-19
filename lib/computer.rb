@@ -1,14 +1,6 @@
 # frozen_string_literal: true
 
-# Full lines of colors, keeping track of hits
-# Stop when four hits or 3 hits and only one color left
-# Random combos, keeping track of:
-#   - Guesses with no hits
-#   - Store index of each color during no hits
-#   - Guesses with three hits
-#
-#   - If two hits, only swap two numbers,
-#     then if no hits, got back and swap the other two numbers instead
+# Object modeling the computer AI as a Mastermind opponent.
 class Computer
   attr_reader :colors, :total_hits, :possible_codes
 
@@ -25,7 +17,6 @@ class Computer
   def one_color_guess
     possible_colors = @colors.select { |_color, hash| hash[:hits].nil? }
     color = possible_colors.to_a.sample.first
-    # TODO: Medium difficulty - random guess using hit colors if there is only one color left to guess.
     Array.new(4, color)
   end
 
@@ -50,9 +41,26 @@ class Computer
     all_colors.permutation { |permutation| @possible_codes << permutation }
   end
 
+  # This method is for guesses with all the right colors and 0 position matches.
   def remove_no_hit_indices(guess)
-    guess.each_with_index do |color, index|
-      @possible_codes.delete_if { |code| code[index] == color }
+    @possible_codes.delete_if do |perm|
+      perm[0] == guess[0] || perm[1] == guess[1] || perm[2] == guess[2] || perm[3] == guess[3]
     end
+  end
+
+  # This method is for guesses with one full match and three color only matches.
+  def remove_one_hit_indices(guess)
+    @possible_codes.delete_if { |perm| number_of_matches(guess, perm) > 1 }
+  end
+
+  # This method is for guesses with two full match and two color only matches.
+  def remove_two_hit_indices(guess)
+    @possible_codes.delete_if { |perm| number_of_matches(guess, perm) != 2 }
+  end
+
+  def number_of_matches(guess_one, guess_two)
+    matches = 0
+    (0..3).each { |i| matches += 1 if guess_one[i] == guess_two[i] }
+    matches
   end
 end

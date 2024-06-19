@@ -23,7 +23,7 @@ class Game
   end
 
   def take_player_turn
-    round = Round.new player_turns
+    round = Round.new
 
     puts "\nYour turn.\n\nPress ENTER to continue."
     gets
@@ -37,19 +37,8 @@ class Game
     gets
   end
 
-  def player_turns
-    case difficulty
-    when :hard
-      8
-    when :normal
-      10
-    else
-      12
-    end
-  end
-
   def take_computer_turn
-    round = Round.new 12
+    round = Round.new
     computer = Computer.new
 
     get_player_code round
@@ -73,8 +62,25 @@ class Game
   def computer_guess_until_round_end(computer, round)
     until round.code_is_cracked || round.turns_taken == round.turns
       guess = computer.random_guess
-      round.guess(guess)
+      feedback = round.guess(guess)
+      next unless feedback[:full_matches] + feedback[:color_only_matches] == 4
+
+      perform_normal_mode_ai(computer, guess, feedback)
+      perform_hard_mode_ai(computer, guess, feedback)
     end
+  end
+
+  def perform_normal_mode_ai(computer, guess, feedback)
+    return if difficulty == :easy
+
+    computer.remove_two_hit_indices guess if feedback[:color_only_matches] == 2
+  end
+
+  def perform_hard_mode_ai(computer, guess, feedback)
+    return unless difficulty == :hard
+
+    computer.remove_no_hit_indices guess if feedback[:color_only_matches] == 4
+    computer.remove_one_hit_indices guess if feedback[:color_only_matches] == 3
   end
 
   def print_computer_turn_summary(round)
