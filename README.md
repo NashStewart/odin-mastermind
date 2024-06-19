@@ -14,10 +14,13 @@ From the root directory:
 
 ## Gameplay
 Crack the computer's code:
+
 <img width="855" alt="image" src="https://github.com/NashStewart/odin-mastermind/assets/12480021/a368e57e-bdd8-4cdf-b760-8d2b622c64e6">
 
 Create your own code:
+
 <img width="798" alt="image" src="https://github.com/NashStewart/odin-mastermind/assets/12480021/695c723f-5e8e-40e2-b574-afb001a4621b">
 
 Win the game!
+
 <img width="770" alt="image" src="https://github.com/NashStewart/odin-mastermind/assets/12480021/3420ab67-0030-4514-a655-332e53834fbb">
